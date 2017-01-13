@@ -5,6 +5,8 @@ Behavioural learning project for Udacity's self-driving car nanodegree program.
 `conda env create -f environment.yml`
 For GPU additionally we need to install `pip install tensorflow-gpu`
 
+`conda install -c https://conda.anaconda.org/menpo opencv3`
+
 
 ## Data
 Initially I am using the provided dataset as I do not have a joystick to generate reliable data with the driving simulator.

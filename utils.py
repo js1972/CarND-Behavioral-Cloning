@@ -1,5 +1,7 @@
 import numpy as np
 from scipy.misc import imread, imresize
+import cv2
+
 
 def read_imgs(img_paths):
     imgs = np.empty([len(img_paths), 160, 320, 3])
@@ -8,6 +10,7 @@ def read_imgs(img_paths):
         imgs[i] = imread(path)
 
     return imgs
+
 
 def resize(imgs, shape=(32, 16, 3)):
     """
@@ -20,11 +23,13 @@ def resize(imgs, shape=(32, 16, 3)):
 
     return imgs_resized
 
+
 def rgb2gray(imgs):
     """
     Convert images to grayscale.
     """
     return np.mean(imgs, axis=3, keepdims=True)
+
 
 def normalize(imgs):
     """
@@ -32,12 +37,14 @@ def normalize(imgs):
     """
     return imgs / (255.0 / 2) - 1
 
+
 def preprocess(imgs):
     imgs_processed = resize(imgs)
     #imgs_processed = rgb2gray(imgs_processed)
     imgs_processed = normalize(imgs_processed)
 
     return imgs_processed
+
 
 def random_flip(imgs, angles):
     """
@@ -55,10 +62,40 @@ def random_flip(imgs, angles):
 
     return new_imgs, new_angles
 
+
+def augment_brightness(images):
+    '''
+    :param image: Input image
+    :return: output image with reduced brightness
+    '''
+
+    new_imgs = np.empty_like(images)
+
+    for i, image in enumerate(images):
+        # convert to HSV so that its easy to adjust brightness
+        image1 = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+
+        # randomly generate the brightness reduction factor
+        # Add a constant so that it prevents the image from being completely dark
+        random_bright = .25+np.random.uniform()
+
+        # Apply the brightness reduction to the V channel
+        image1[:,:,2] = image1[:,:,2]*random_bright
+
+        # convert to RBG again
+        image1 = cv2.cvtColor(image1, cv2.COLOR_HSV2RGB)
+
+        new_imgs[i] = image1
+
+    return new_imgs
+
+
 def augment(imgs, angles):
-    imgs_augmented, angles_augmented = random_flip(imgs, angles)
+    augmented_brightness_imgs = augment_brightness(imgs)
+    imgs_augmented, angles_augmented = random_flip(augmented_brightness_imgs, angles)
 
     return imgs_augmented, angles_augmented
+
 
 def gen_batches(imgs, angles, batch_size):
     """
@@ -73,9 +110,10 @@ def gen_batches(imgs, angles, batch_size):
     num_elts = len(imgs)
 
     while True:
-        indeces = np.random.choice(num_elts, batch_size)
-        batch_imgs_raw, angles_raw = read_imgs(imgs[indeces]), angles[indeces].astype(float)
+        indices = np.random.choice(num_elts, batch_size)
+        batch_imgs_raw, angles_raw = read_imgs(imgs[indices]), angles[indices].astype(float)
 
-        batch_imgs, batch_angles = augment(preprocess(batch_imgs_raw), angles_raw)
+        #batch_imgs, batch_angles = augment(preprocess(batch_imgs_raw), angles_raw)
+        batch_imgs, batch_angles = preprocess(augment(batch_imgs_raw, angles_raw))
 
         yield batch_imgs, batch_angles
