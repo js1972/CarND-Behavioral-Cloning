@@ -20,7 +20,7 @@ flags.DEFINE_string('imgs_dir', 'data/IMG/', 'The directory of the image data.')
 flags.DEFINE_string('data_path', 'data/driving_log.csv', 'The path to the csv of training data.')
 #flags.DEFINE_string('data_path', 'temp/driving_log.csv', 'The path to the csv of training data.')
 flags.DEFINE_integer('batch_size', 128, 'The minibatch size.')
-flags.DEFINE_integer('num_epochs', 10, 'The number of epochs to train for.')
+flags.DEFINE_integer('num_epochs', 20, 'The number of epochs to train for.')
 flags.DEFINE_float('lrate', 0.0001, 'The learning rate for training.')
 
 
