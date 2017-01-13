@@ -1,13 +1,16 @@
 import numpy as np
-from scipy.misc import imread, imresize
+from scipy.misc import imread, imresize, toimage
 import cv2
+from keras.preprocessing.image import img_to_array, load_img
 
 
-def read_imgs(img_paths):
+def read_images(img_paths):
     imgs = np.empty([len(img_paths), 160, 320, 3])
 
     for i, path in enumerate(img_paths):
         imgs[i] = imread(path)
+        #image = load_img(path, target_size=(160, 320))
+        #imgs[i] = img_to_array(image)
 
     return imgs
 
@@ -20,6 +23,7 @@ def resize(imgs, shape=(32, 16, 3)):
     imgs_resized = np.empty([len(imgs), height, width, channels])
     for i, img in enumerate(imgs):
         imgs_resized[i] = imresize(img, shape)
+        #imgs_resized[i] = cv2.resize(img, (16, 32))
 
     return imgs_resized
 
@@ -72,20 +76,20 @@ def augment_brightness(images):
     new_imgs = np.empty_like(images)
 
     for i, image in enumerate(images):
+        #rgb = toimage(image)
+
         # convert to HSV so that its easy to adjust brightness
-        image1 = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+        hsv = cv2.cvtColor(image.astype("uint8"), cv2.COLOR_RGB2HSV)
 
         # randomly generate the brightness reduction factor
         # Add a constant so that it prevents the image from being completely dark
         random_bright = .25+np.random.uniform()
 
         # Apply the brightness reduction to the V channel
-        image1[:,:,2] = image1[:,:,2]*random_bright
+        hsv[:,:,2] = hsv[:,:,2]*random_bright
 
         # convert to RBG again
-        image1 = cv2.cvtColor(image1, cv2.COLOR_HSV2RGB)
-
-        new_imgs[i] = image1
+        new_imgs[i] = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
 
     return new_imgs
 
@@ -107,13 +111,13 @@ def gen_batches(imgs, angles, batch_size):
 
     :yield: A tuple (images, angles), where both images and angles have batch_size elements.
     """
-    num_elts = len(imgs)
 
     while True:
-        indices = np.random.choice(num_elts, batch_size)
-        batch_imgs_raw, angles_raw = read_imgs(imgs[indices]), angles[indices].astype(float)
+        indices = np.random.choice(len(imgs), batch_size)
+        batch_imgs_raw, angles_raw = read_images(imgs[indices]), angles[indices].astype(float)
 
         #batch_imgs, batch_angles = augment(preprocess(batch_imgs_raw), angles_raw)
-        batch_imgs, batch_angles = preprocess(augment(batch_imgs_raw, angles_raw))
+        batch_imgs, batch_angles = augment(batch_imgs_raw, angles_raw)
+        batch_imgs = preprocess(batch_imgs)
 
         yield batch_imgs, batch_angles
