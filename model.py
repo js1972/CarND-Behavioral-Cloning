@@ -38,8 +38,21 @@ def main(_):
         reader = csv.reader(f)
         # skip header
         next(reader)
-        # data is a list of tuples (img path, steering angle)
+        # data is a list of tuples (img path, steering angle, etc.)
         data = np.array([row for row in reader])
+
+    # Drop rows with zero steering angle with 50% chance! This is to try and balance the fact that there are far
+    # more zero entries than turning angles.
+    data_with_some_zeros_removed = []
+    for d in data:
+        prob = np.random.random()
+
+        if d[3].astype("float") != 0.:
+            data_with_some_zeros_removed.append(d)
+        elif prob < 0.5:
+            data_with_some_zeros_removed.append(d)
+
+    data = np.array(data_with_some_zeros_removed)
 
     # Split train and validation data
     # Note that the data file is 7 columns wide though we are only using 2 columns
