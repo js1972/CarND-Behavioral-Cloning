@@ -1,8 +1,8 @@
 .DS_Store
 
-data/
-temp/
-logs/
+data
+temp
+logs
 simulator
 simulator/
 
