@@ -15,7 +15,7 @@ from utils import gen_batches
 flags = tf.app.flags
 FLAGS = flags.FLAGS
 
-flags.DEFINE_string('imgs_dir', 'data/IMG/', 'The directory of the image data.')
+flags.DEFINE_string("image_dir", "data/IMG/", "The directory of the image data.")
 #flags.DEFINE_string('imgs_dir', 'temp/IMG/', 'The directory of the image data.')
 flags.DEFINE_string('data_path', 'data/driving_log.csv', 'The path to the csv of training data.')
 #flags.DEFINE_string('data_path', 'temp/driving_log.csv', 'The path to the csv of training data.')

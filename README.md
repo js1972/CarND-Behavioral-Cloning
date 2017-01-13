@@ -1,8 +1,9 @@
 # CarND-Behavioral-Cloning
 Behavioural learning project for Udacity's self-driving car nanodegree program.
 
-## Python environement
-conda env create -f environment.yml
+## Python environment
+`conda env create -f environment.yml`
+For GPU additionally we need to install `pip install tensorflow-gpu`
 
 
 ## Data
@@ -17,6 +18,12 @@ I've tracked the save directory in github so we immediately have working weights
 
 ## Model
 <describe model here>
+
+
+## Training
+Run the model with default parameters: `python model.py`
+The default params are:
+-
 
 
 ## Notes
