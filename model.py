@@ -21,7 +21,9 @@ flags.DEFINE_string('data_path', 'data/driving_log.csv', 'The path to the csv of
 #flags.DEFINE_string('data_path', 'temp/driving_log.csv', 'The path to the csv of training data.')
 flags.DEFINE_integer('batch_size', 128, 'The minibatch size.')
 flags.DEFINE_integer('num_epochs', 20, 'The number of epochs to train for.')
-flags.DEFINE_float('lrate', 0.0001, 'The learning rate for training.')
+flags.DEFINE_float("lrate", 0.0001, "The learning rate for training.")
+flags.DEFINE_float("alldata", False, "Run with ALL cameras data.")
+flags.DEFINE_float("dropzeros", False, "Randomly drop zero steering angles data.")
 
 
 def main(_):
@@ -29,6 +31,7 @@ def main(_):
     print("Running with the following FLAGs:")
     print("Mini-batch size: {}".format(FLAGS.batch_size))
     print("Number of epochs: {}".format(FLAGS.num_epochs))
+    print("Running with ALL camera angles: {}".format(FLAGS.alldata))
 
     ##
     # Load Data
@@ -37,22 +40,25 @@ def main(_):
     with open(FLAGS.data_path, 'r') as f:
         reader = csv.reader(f)
         # skip header
-        next(reader)
+        if FLAGS.alldata = False:
+            next(reader)
+
         # data is a list of tuples (img path, steering angle, etc.)
         data = np.array([row for row in reader])
 
-    # Drop rows with zero steering angle with 50% chance! This is to try and balance the fact that there are far
-    # more zero entries than turning angles.
-    data_with_some_zeros_removed = []
-    for d in data:
-        prob = np.random.random()
+    if FLAGS.dropzeros:
+        # Drop rows with zero steering angle with 50% chance! This is to try and balance the fact that there are far
+        # more zero entries than turning angles.
+        data_with_some_zeros_removed = []
+        for d in data:
+            prob = np.random.random()
 
-        if d[3].astype("float") != 0.:
-            data_with_some_zeros_removed.append(d)
-        elif prob < 0.5:
-            data_with_some_zeros_removed.append(d)
+            if d[3].astype("float") != 0.:
+                data_with_some_zeros_removed.append(d)
+            elif prob < 0.5:
+                data_with_some_zeros_removed.append(d)
 
-    data = np.array(data_with_some_zeros_removed)
+        data = np.array(data_with_some_zeros_removed)
 
     # Split train and validation data
     # Note that the data file is 7 columns wide though we are only using 2 columns

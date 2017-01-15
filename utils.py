@@ -76,8 +76,6 @@ def augment_brightness(images):
     new_imgs = np.empty_like(images)
 
     for i, image in enumerate(images):
-        #rgb = toimage(image)
-
         # convert to HSV so that its easy to adjust brightness
         hsv = cv2.cvtColor(image.astype("uint8"), cv2.COLOR_RGB2HSV)
 
