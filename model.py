@@ -22,8 +22,8 @@ flags.DEFINE_string('data_path', 'data/driving_log.csv', 'The path to the csv of
 flags.DEFINE_integer('batch_size', 128, 'The minibatch size.')
 flags.DEFINE_integer('num_epochs', 20, 'The number of epochs to train for.')
 flags.DEFINE_float("lrate", 0.0001, "The learning rate for training.")
-flags.DEFINE_float("alldata", False, "Run with ALL cameras data.")
-flags.DEFINE_float("dropzeros", False, "Randomly drop zero steering angles data.")
+flags.DEFINE_boolean("alldata", True, "Run with ALL cameras data.")
+flags.DEFINE_boolean("dropzeros", False, "Randomly drop zero steering angles data.")
 
 
 def main(_):
@@ -32,21 +32,26 @@ def main(_):
     print("Mini-batch size: {}".format(FLAGS.batch_size))
     print("Number of epochs: {}".format(FLAGS.num_epochs))
     print("Running with ALL camera angles: {}".format(FLAGS.alldata))
+    print("Dropping random zero steering angles: {}".format(FLAGS.dropzeros))
 
     ##
     # Load Data
     ##
 
-    with open(FLAGS.data_path, 'r') as f:
+    file_to_process = FLAGS.data_path
+    if FLAGS.alldata == True:
+        file_to_process = "data/driving_log_all.csv"
+
+    with open(file_to_process, 'r') as f:
         reader = csv.reader(f)
         # skip header
-        if FLAGS.alldata = False:
+        if FLAGS.alldata == False:
             next(reader)
 
         # data is a list of tuples (img path, steering angle, etc.)
         data = np.array([row for row in reader])
 
-    if FLAGS.dropzeros:
+    if FLAGS.dropzeros == True:
         # Drop rows with zero steering angle with 50% chance! This is to try and balance the fact that there are far
         # more zero entries than turning angles.
         data_with_some_zeros_removed = []
