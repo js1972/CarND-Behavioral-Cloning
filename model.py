@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import csv
 from keras.models import Sequential
-from keras.layers import Conv2D, Dense, MaxPooling2D, Dropout, Flatten
+from keras.layers import Conv2D, Dense, MaxPooling2D, Dropout, Flatten, BatchNormalization
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoard
 import os
@@ -89,23 +89,29 @@ def main(_):
     ##
 
     model = Sequential([
+        BatchNormalization(),
         Conv2D(32, 3, 3, input_shape=(64, 64, 3), border_mode="same", activation="relu"),
         MaxPooling2D(pool_size=(2, 2)),
 
+        BatchNormalization(),
         Conv2D(64, 3, 3, border_mode="same", activation="relu"),
         MaxPooling2D(pool_size=(2, 2)),
-        #Dropout(0.5),
+
+        BatchNormalization(),
         Conv2D(128, 3, 3, border_mode="same", activation="relu"),
         MaxPooling2D(pool_size=(2, 2)),
         #Conv2D(256, 3, 3, border_mode='same', activation='relu'),
         #MaxPooling2D(pool_size=(2, 2)),
         #Dropout(0.5),
+
         Flatten(),
         Dense(1024, activation="relu"),
         Dropout(0.5),
+
         Dense(512, activation="relu"),
         #Dense(128, activation='relu'),
         Dropout(0.5),
+        
         Dense(1, name="output", activation="linear"),  #tanh
     ])
 
