@@ -22,7 +22,8 @@ def resize(imgs, shape=(32, 16, 3)):
     height, width, channels = shape
     imgs_resized = np.empty([len(imgs), height, width, channels])
     for i, img in enumerate(imgs):
-        imgs_resized[i] = imresize(img, shape)
+        cropped = img[55:135, :, :]
+        imgs_resized[i] = imresize(cropped, shape)
         #imgs_resized[i] = cv2.resize(img, (16, 32))
 
     return imgs_resized
