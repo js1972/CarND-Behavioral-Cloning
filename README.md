@@ -27,6 +27,12 @@ Run the model with default parameters: `python model.py`
 The default params are:
 -
 
+## Prediction
+To run the trained model on the simulator, first start up the Udacity driving simulator app in autonomous mode.
+Then run the following at the terminal:
+```
+python drive.py save/model.json
+```
 
 ## Notes
 Initially I used a model from the Keras Traffic Signs lab as a base. With pre-processing I started out switching the images to grayscale thinking it would be easier for the model to train on - but in hindsight I believe this removed valuable information for the convolutional layers to use so I switched back to colour images.
