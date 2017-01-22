@@ -89,8 +89,8 @@ def main(_):
     ##
 
     model = Sequential([
-        BatchNormalization(),
-        Conv2D(32, 3, 3, input_shape=(64, 64, 3), border_mode="same", activation="relu"),
+        BatchNormalization(input_shape=(64, 64, 3)),
+        Conv2D(32, 3, 3, border_mode="same", activation="relu"),
         MaxPooling2D(pool_size=(2, 2)),
 
         BatchNormalization(),
@@ -111,7 +111,7 @@ def main(_):
         Dense(512, activation="relu"),
         #Dense(128, activation='relu'),
         Dropout(0.5),
-        
+
         Dense(1, name="output", activation="linear"),  #tanh
     ])
 
