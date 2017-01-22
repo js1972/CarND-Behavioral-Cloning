@@ -15,7 +15,7 @@ def read_images(img_paths):
     return imgs
 
 
-def resize(imgs, shape=(32, 16, 3)):
+def resize(imgs, shape=(64, 64, 3)):
     """
     Resize images to shape.
     """
@@ -57,7 +57,7 @@ def random_flip(imgs, angles):
     new_imgs = np.empty_like(imgs)
     new_angles = np.empty_like(angles)
     for i, (img, angle) in enumerate(zip(imgs, angles)):
-        if np.random.choice(2):
+        if np.random.rand() > 0.5:  # 50 percent chance to see the right angle
             new_imgs[i] = np.fliplr(img)
             new_angles[i] = angle * -1
         else:
