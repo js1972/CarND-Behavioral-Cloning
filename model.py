@@ -40,6 +40,8 @@ def main(_):
 
     file_to_process = FLAGS.data_path
     if FLAGS.alldata == True:
+        # With the all_data file only the center camera column is useful as its had the left/right cameras
+        # added to that column. The left/right columns are meaningless.
         file_to_process = "data/driving_log_all.csv"
 
     with open(file_to_process, 'r') as f:
@@ -100,9 +102,6 @@ def main(_):
         BatchNormalization(),
         Conv2D(128, 3, 3, border_mode="same", activation="relu"),
         MaxPooling2D(pool_size=(2, 2)),
-        #Conv2D(256, 3, 3, border_mode='same', activation='relu'),
-        #MaxPooling2D(pool_size=(2, 2)),
-        #Dropout(0.5),
 
         Flatten(),
         Dense(1024, activation="relu"),
