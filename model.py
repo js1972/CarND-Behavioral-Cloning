@@ -67,7 +67,8 @@ def main(_):
 
     # Split train and validation data
     # Note that the data file is 7 columns wide though we are only using 2 columns
-    # here. We could instead pre-process the data into a clean file?!?
+    # here. We could instead pre-process the data into a clean file or use a pandas
+    # dataframe.
     np.random.shuffle(data)
     split_i = int(len(data) * 0.9)
     X_train, _, _, y_train, _, _, _ = list(zip(*data[:split_i]))
@@ -101,6 +102,7 @@ def main(_):
         #Dropout(0.5),
         Flatten(),
         Dense(1024, activation="relu"),
+        Dropout(0.5),
         Dense(512, activation="relu"),
         #Dense(128, activation='relu'),
         Dropout(0.5),
@@ -144,5 +146,5 @@ def main(_):
         f.write(json)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     tf.app.run()
