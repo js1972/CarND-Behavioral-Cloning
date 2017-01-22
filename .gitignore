@@ -1,5 +1,8 @@
 .DS_Store
 
+# Ignore the trained weights - too big for github
+model.h5
+
 data/
 temp/
 logs/
