@@ -91,17 +91,17 @@ def main(_):
     ##
 
     model = Sequential([
-        BatchNormalization(input_shape=(64, 64, 3)),
-        Conv2D(32, 3, 3, border_mode="same", activation="relu"),
+        #BatchNormalization(input_shape=(64, 64, 3)),
+        Conv2D(32, 3, 3, input_shape=(64, 64, 3), border_mode="same", activation="relu"),
         MaxPooling2D(pool_size=(2, 2)),
 
-        BatchNormalization(),
+        #BatchNormalization(),
         Conv2D(64, 3, 3, border_mode="same", activation="relu"),
         MaxPooling2D(pool_size=(2, 2)),
 
-        BatchNormalization(),
-        Conv2D(128, 3, 3, border_mode="same", activation="relu"),
-        MaxPooling2D(pool_size=(2, 2)),
+        #BatchNormalization(),
+        #Conv2D(128, 3, 3, border_mode="same", activation="relu"),
+        #MaxPooling2D(pool_size=(2, 2)),
 
         Flatten(),
         Dense(1024, activation="relu"),
