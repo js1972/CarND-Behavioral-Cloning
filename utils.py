@@ -15,7 +15,7 @@ def read_images(img_paths):
     return imgs
 
 
-def resize(imgs, shape=(64, 64, 3)):
+def resize(imgs, shape=(32, 16, 3)):
     """
     Resize images to shape.
     """

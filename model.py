@@ -16,7 +16,6 @@ flags = tf.app.flags
 FLAGS = flags.FLAGS
 
 flags.DEFINE_string("image_dir", "data/IMG/", "The directory of the image data.")
-#flags.DEFINE_string('imgs_dir', 'temp/IMG/', 'The directory of the image data.')
 flags.DEFINE_string('data_path', 'data/driving_log.csv', 'The path to the csv of training data.')
 #flags.DEFINE_string('data_path', 'temp/driving_log.csv', 'The path to the csv of training data.')
 flags.DEFINE_integer('batch_size', 128, 'The minibatch size.')
@@ -100,8 +99,8 @@ def main(_):
         MaxPooling2D(pool_size=(2, 2)),
 
         #BatchNormalization(),
-        #Conv2D(128, 3, 3, border_mode="same", activation="relu"),
-        #MaxPooling2D(pool_size=(2, 2)),
+        Conv2D(128, 3, 3, border_mode="same", activation="relu"),
+        MaxPooling2D(pool_size=(2, 2)),
 
         Flatten(),
         Dense(1024, activation="relu"),
