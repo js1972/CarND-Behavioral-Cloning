@@ -27,6 +27,8 @@ Run the model with default parameters: `python model.py`
 The default params are:
 -
 
+While training you can check the logs with tensorbard `tensorboard --logdir=./logs` (but clear out the logdir first).
+
 ## Prediction
 To run the trained model on the simulator, first start up the Udacity driving simulator app in autonomous mode.
 Then run the following at the terminal:
