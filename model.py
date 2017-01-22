@@ -149,6 +149,9 @@ def main(_):
     with open("save/model.json", "w") as f:
         f.write(json)
 
+    # When model has been trained on AWS then secure copy it locally with:
+    # scp carnd@<aws ip>:/home/carnd/CarND-Behavioral-Cloning/save/model.h5 model.h5
+
 
 if __name__ == "__main__":
     tf.app.run()
