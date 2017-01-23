@@ -15,7 +15,7 @@ Ensure you have a sub-directory called data to contain the data and logs for ten
 To get the data directory just unzip the dataset which already has the contents in folders data/IMG.
 Dataset: https://d17h27t6h515a5.cloudfront.net/topher/2016/December/584f6edd_data/data.zip
 
-I've tracked the save directory in github so we immediately have working weights on cloning the repo.
+First working model was based on images resized down to 32 rows x 16 columns. Even though the model was flawless on track 1 the driving behaviour was quite wobbly and it failed part way around track 2. I believe I was losing too much information at this image size so moved up to 32 x 32.
 
 
 ## Model
