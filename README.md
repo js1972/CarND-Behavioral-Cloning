@@ -93,3 +93,5 @@ python drive.py save/model.json
 ```
 Now watch the car drive endlessly around Track 1.
 You can attempt Track 2 but I have found it crashes into the cliff face approx 3/4 of the way along. More work needed on pre-processing and/or augmentation here...
+
+[![Youtube clip of car on test track 1](http://img.youtube.com/vi/uI2e_8HvAp0/0.jpg)](http://www.youtube.com/watch?v=uI2e_8HvAp0 "Track 1")
