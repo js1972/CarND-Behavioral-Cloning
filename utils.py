@@ -35,6 +35,16 @@ def rgb2gray(imgs):
     """
     return np.mean(imgs, axis=3, keepdims=True)
 
+def rgb2hsv(imgs):
+    """
+    Convert RGB images array into HSV
+    """
+    hsv_imgs = np.empty_like(imgs)
+    for i, image in enumerate(imgs):
+        hsv_imgs[i] = cv2.cvtColor(image.astype("uint8"), cv2.COLOR_RGB2HSV)
+
+    return hsv_imgs
+
 
 def normalize(imgs):
     """
@@ -45,7 +55,8 @@ def normalize(imgs):
 
 def preprocess(imgs):
     imgs_processed = resize(imgs)
-    imgs_single_channel = rgb2gray(imgs_processed)
+    #imgs_single_channel = rgb2gray(imgs_processed)
+    imgs_single_channel = rgb2hsv(imgs_processed)
     imgs_processed = normalize(imgs_single_channel)
 
     return imgs_processed
