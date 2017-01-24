@@ -90,6 +90,9 @@ def main(_):
     ##
 
     model = Sequential([
+        Conv2D(32, 3, 3, input_shape=(32, 32, 1), border_mode="same", activation="relu"),
+        MaxPooling2D(pool_size=(2, 2)),
+
         #BatchNormalization(input_shape=(64, 64, 3)),
         Conv2D(32, 3, 3, input_shape=(32, 32, 3), border_mode="same", activation="relu"),
         MaxPooling2D(pool_size=(2, 2)),

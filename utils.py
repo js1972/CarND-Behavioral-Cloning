@@ -38,15 +38,15 @@ def rgb2gray(imgs):
 
 def normalize(imgs):
     """
-    Normalize images between [-1, 1].
+    Normalize images between [-1, 1]. Why not [0, 1] ?
     """
     return imgs / (255.0 / 2) - 1
 
 
 def preprocess(imgs):
     imgs_processed = resize(imgs)
-    #imgs_processed = rgb2gray(imgs_processed)
-    imgs_processed = normalize(imgs_processed)
+    imgs_single_channel = rgb2gray(imgs_processed)
+    imgs_processed = normalize(imgs_single_channel)
 
     return imgs_processed
 
