@@ -2,12 +2,10 @@ import tensorflow as tf
 import numpy as np
 import csv
 from keras.models import Sequential
-from keras.layers import Conv2D, Dense, MaxPooling2D, Dropout, Flatten, BatchNormalization
+from keras.layers import Conv2D, Dense, MaxPooling2D, Dropout, Flatten, Activation
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoard
 import os
-
-#from setuptools.sandbox import save_argv
 
 from utils import batch_generator
 
@@ -38,7 +36,10 @@ def main(_):
     ##
 
     file_to_process = FLAGS.data_path
+
     if FLAGS.alldata == True:
+        # Use a file that includes center, left and right cameras - this was created with Jupyter
+        # Notebook pre_process_data.ipynb.
         # With the all_data file only the center camera column is useful as its had the left/right cameras
         # added to that column. The left/right columns are now meaningless.
         file_to_process = "data/driving_log_all.csv"
@@ -66,7 +67,11 @@ def main(_):
 
         data = np.array(data_with_some_zeros_removed)
 
+
+    ##
     # Split train and validation data
+    ##
+
     # Note that the data file is 7 columns wide though we are only using 2 columns
     # here. We could instead pre-process the data into a clean file or use a pandas
     # dataframe.
@@ -90,17 +95,20 @@ def main(_):
     ##
 
     model = Sequential([
-        Conv2D(32, 3, 3, input_shape=(32, 16, 3), border_mode="same", activation="relu"),
+        Conv2D(32, 3, 3, input_shape=(32, 16, 3), border_mode="same"),
         MaxPooling2D(pool_size=(2, 2)),
+        Dropout(0.5),
+        Activation("relu"),
 
-        Conv2D(32, 3, 3, input_shape=(32, 32, 3), border_mode="same", activation="relu"),
+        Conv2D(64, 3, 3, border_mode="same"),
         MaxPooling2D(pool_size=(2, 2)),
+        Dropout(0.5),
+        Activation("relu"),
 
-        Conv2D(64, 3, 3, border_mode="same", activation="relu"),
+        Conv2D(128, 3, 3, border_mode="same"),
         MaxPooling2D(pool_size=(2, 2)),
-
-        Conv2D(128, 3, 3, border_mode="same", activation="relu"),
-        MaxPooling2D(pool_size=(2, 2)),
+        Dropout(0.5),
+        Activation("relu"),
 
         Flatten(),
         Dense(1024, activation="relu"),

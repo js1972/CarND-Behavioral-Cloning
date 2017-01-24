@@ -18,8 +18,8 @@ Dataset: https://d17h27t6h515a5.cloudfront.net/topher/2016/December/584f6edd_dat
 First working model was based on images resized down to 32 rows x 16 columns. Even though the model was flawless on track 1 the driving behaviour was quite wobbly and it failed part way around track 2. I believe I was losing too much information at this image size so moved up to 32 x 32.
 
 
-## Model
-<describe model here>
+## Model Architecture
+The base of this model is from the Keras lab for traffic sign classification (See the Jupyter notebook traffic-sign-classification-with-keras.ipynb here https://github.com/js1972/CarND-Keras-Traffic-Sign-Classifier).
 
 
 ## Training
