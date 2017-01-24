@@ -37,11 +37,13 @@ def rgb2gray(imgs):
 
 def rgb2hsv(imgs):
     """
-    Convert RGB images array into HSV
+    Convert RGB images array into HSV and zero-out all but the V dimension!
     """
     hsv_imgs = np.empty_like(imgs)
     for i, image in enumerate(imgs):
         hsv_imgs[i] = cv2.cvtColor(image.astype("uint8"), cv2.COLOR_RGB2HSV)
+        hsv_imgs[i][:, :, 0] = hsv_imgs[:, :, 0] * 0
+        hsv_imgs[i][:, :, 1] = hsv_imgs[:, :, 1] * 0
 
     return hsv_imgs
 
