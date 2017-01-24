@@ -31,6 +31,7 @@ While training you can check the logs with tensorbard `tensorboard --logdir=./lo
 
 Current trained model https://www.dropbox.com/s/xecw5h6zq94zo9v/model.h5?dl=0
 
+If the model has been trained on AWS you can copy the model to your local PC with: `scp carnd@<aws ip>:/home/carnd/CarND-Behavioral-Cloning/save/model.h5 save/model.h5` and likewise with the model definition which is saved to model.json.
 
 ## Prediction
 To run the trained model on the simulator, first start up the Udacity driving simulator app in autonomous mode.

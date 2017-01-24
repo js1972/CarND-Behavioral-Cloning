@@ -7,9 +7,9 @@ from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoard
 import os
 
-from setuptools.sandbox import save_argv
+#from setuptools.sandbox import save_argv
 
-from utils import gen_batches
+from utils import batch_generator
 
 
 flags = tf.app.flags
@@ -40,7 +40,7 @@ def main(_):
     file_to_process = FLAGS.data_path
     if FLAGS.alldata == True:
         # With the all_data file only the center camera column is useful as its had the left/right cameras
-        # added to that column. The left/right columns are meaningless.
+        # added to that column. The left/right columns are now meaningless.
         file_to_process = "data/driving_log_all.csv"
 
     with open(file_to_process, 'r') as f:
@@ -132,11 +132,11 @@ def main(_):
     print("samples_per_epoch:", samples_per_epoch)
     print("\n")
 
-    history = model.fit_generator(gen_batches(X_train, y_train, FLAGS.batch_size),
+    history = model.fit_generator(batch_generator(X_train, y_train, FLAGS.batch_size),
                                   samples_per_epoch,
                                   FLAGS.num_epochs,
                                   callbacks=[early_stopping, save_weights, tensorboard],
-                                  validation_data=gen_batches(X_val, y_val, FLAGS.batch_size),
+                                  validation_data=batch_generator(X_val, y_val, FLAGS.batch_size),
                                   nb_val_samples=len(X_val))
 
     ##
@@ -147,9 +147,6 @@ def main(_):
     #model.save_weights("save/model.h5")
     with open("save/model.json", "w") as f:
         f.write(json)
-
-    # When model has been trained on AWS then secure copy it locally with:
-    # scp carnd@<aws ip>:/home/carnd/CarND-Behavioral-Cloning/save/model.h5 model.h5
 
 
 if __name__ == "__main__":

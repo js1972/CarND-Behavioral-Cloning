@@ -58,6 +58,13 @@ def normalize(imgs):
 
 
 def preprocess(imgs):
+    """
+    Pre-process the images. Note that pre-processing must be applied
+    for training and predictions.
+
+    :param imgs: Numpy array of images
+    :return:  Numpy array of pre-processed images
+    """
     imgs_processed = crop_and_resize(imgs)
     imgs_processed = normalize(imgs_processed)
 
@@ -66,7 +73,7 @@ def preprocess(imgs):
 
 def random_flip(imgs, angles):
     """
-    Augment the data by randomly flipping some angles / images horizontally.
+    Augment the data by randomly flipping some images/angles horizontally.
     """
     new_imgs = np.empty_like(imgs)
     new_angles = np.empty_like(angles)
@@ -82,10 +89,12 @@ def random_flip(imgs, angles):
 
 
 def augment_brightness(images):
-    '''
-    :param image: Input image
-    :return: output image with reduced brightness
-    '''
+    """
+    Randomly adjust brightness of provided images.
+
+    :param images: Numpy array of images
+    :return: Numpy array of brightness adjusted imahes
+    """
 
     new_imgs = np.empty_like(images)
 
@@ -113,22 +122,22 @@ def augment(imgs, angles):
     return imgs_augmented, angles_augmented
 
 
-def gen_batches(imgs, angles, batch_size):
+def batch_generator(image_filenames, angles, batch_size):
     """
-    Generates random batches of the input data.
+    Generates random batches of the input data by randomly selecting indices into
+    the provided data; reading the raw images files, augmenting and pre-processing.
 
-    :param imgs: The input images.
-    :param angles: The steering angles associated with each image.
-    :param batch_size: The size of each minibatch.
+    :param imgs: Numpy array of image filenames
+    :param angles: Numpy array of the steering values associated with each image
+    :param batch_size: The size of each minibatch
 
     :yield: A tuple (images, angles), where both images and angles have batch_size elements.
     """
 
     while True:
-        indices = np.random.choice(len(imgs), batch_size)
-        batch_imgs_raw, angles_raw = read_images(imgs[indices]), angles[indices].astype(float)
+        indices = np.random.choice(len(image_filenames), batch_size)
+        batch_imgs_raw, angles_raw = read_images(image_filenames[indices]), angles[indices].astype(float)
 
-        #batch_imgs, batch_angles = augment(preprocess(batch_imgs_raw), angles_raw)
         batch_imgs, batch_angles = augment(batch_imgs_raw, angles_raw)
         batch_imgs = preprocess(batch_imgs)
 
