@@ -5,6 +5,12 @@ from keras.preprocessing.image import img_to_array, load_img
 
 
 def read_images(img_paths):
+    """
+    Use the scipy imread function to read each image into a nunmpy array
+
+    :param img_paths: Numpy array of image paths to read
+    :return: 4d Numpy array containing all the images from image_paths.
+    """
     imgs = np.empty([len(img_paths), 160, 320, 3])
 
     for i, path in enumerate(img_paths):
@@ -116,6 +122,14 @@ def augment_brightness(images):
 
 
 def augment(imgs, angles):
+    """
+    Perform dynamic image augmentation by randomly adjust the provdied images
+    for brightness and flipping horizontally.
+
+    :param imgs: Numpy array of images
+    :param angles: Numpy array of angles
+    :return: The augmented images and angles as a tuple
+    """
     augmented_brightness_imgs = augment_brightness(imgs)
     imgs_augmented, angles_augmented = random_flip(augmented_brightness_imgs, angles)
 
