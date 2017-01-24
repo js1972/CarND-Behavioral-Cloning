@@ -19,7 +19,10 @@ First working model was based on images resized down to 32 rows x 16 columns. Ev
 
 
 ## Model Architecture
-The base of this model is from the Keras lab for traffic sign classification (See the Jupyter notebook traffic-sign-classification-with-keras.ipynb here https://github.com/js1972/CarND-Keras-Traffic-Sign-Classifier).
+The base of this model is from the Keras lab for traffic sign classification (See the Jupyter notebook traffic-sign-classification-with-keras.ipynb here https://github.com/js1972/CarND-Keras-Traffic-Sign-Classifier). I added to my final model in this lab one more convolutional layer and one more fully connected layer.
+
+The final architecture is:
+
 
 
 ## Training

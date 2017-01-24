@@ -95,20 +95,14 @@ def main(_):
     ##
 
     model = Sequential([
-        Conv2D(32, 3, 3, input_shape=(32, 16, 3), border_mode="same"),
+        Conv2D(32, 3, 3, input_shape=(32, 16, 3), border_mode="same", activation="relu"),
         MaxPooling2D(pool_size=(2, 2)),
-        Dropout(0.5),
-        Activation("relu"),
 
-        Conv2D(64, 3, 3, border_mode="same"),
+        Conv2D(64, 3, 3, border_mode="same", activation="relu"),
         MaxPooling2D(pool_size=(2, 2)),
-        Dropout(0.5),
-        Activation("relu"),
 
-        Conv2D(128, 3, 3, border_mode="same"),
+        Conv2D(128, 3, 3, border_mode="same", activation="relu"),
         MaxPooling2D(pool_size=(2, 2)),
-        Dropout(0.5),
-        Activation("relu"),
 
         Flatten(),
         Dense(1024, activation="relu"),
