@@ -5,7 +5,7 @@ from keras.utils.visualize_util import plot
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Print Keras model from json")
-    parser.add_argument("model_file", type=str, help="Path to model definition json.")
+    parser.add_argument("--model", type=str, help="Path to model definition json.")
     args = parser.parse_args()
 
     with open(args.model, "r") as jfile:
