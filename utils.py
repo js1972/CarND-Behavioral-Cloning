@@ -42,8 +42,8 @@ def rgb2hsv(imgs):
     hsv_imgs = np.empty_like(imgs)
     for i, image in enumerate(imgs):
         hsv = cv2.cvtColor(image.astype("uint8"), cv2.COLOR_RGB2HSV)
-        hsv[i][:, :, 0] = hsv[:, :, 0] * 0
-        hsv[i][:, :, 1] = hsv[:, :, 1] * 0
+        hsv[:, :, 0] = hsv[:, :, 0] * 0
+        hsv[:, :, 1] = hsv[:, :, 1] * 0
         hsv_imgs[i] = hsv
 
     return hsv_imgs
