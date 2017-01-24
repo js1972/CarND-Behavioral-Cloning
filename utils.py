@@ -15,9 +15,9 @@ def read_images(img_paths):
     return imgs
 
 
-def resize(imgs, shape=(32, 32, 3)):
+def crop_and_resize(imgs, shape=(32, 16, 3)):
     """
-    Resize images to shape.
+    Crop and Resize images to given shape.
     """
     height, width, channels = shape
     imgs_resized = np.empty([len(imgs), height, width, channels])
@@ -34,6 +34,7 @@ def rgb2gray(imgs):
     Convert images to grayscale.
     """
     return np.mean(imgs, axis=3, keepdims=True)
+
 
 def rgb2hsv(imgs):
     """
@@ -57,10 +58,8 @@ def normalize(imgs):
 
 
 def preprocess(imgs):
-    imgs_processed = resize(imgs)
-    #imgs_single_channel = rgb2gray(imgs_processed)
-    imgs_single_channel = rgb2hsv(imgs_processed)
-    imgs_processed = normalize(imgs_single_channel)
+    imgs_processed = crop_and_resize(imgs)
+    imgs_processed = normalize(imgs_processed)
 
     return imgs_processed
 

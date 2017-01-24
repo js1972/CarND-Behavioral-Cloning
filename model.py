@@ -90,18 +90,15 @@ def main(_):
     ##
 
     model = Sequential([
+        Conv2D(32, 3, 3, input_shape=(32, 16, 3), border_mode="same", activation="relu"),
+        MaxPooling2D(pool_size=(2, 2)),
+
         Conv2D(32, 3, 3, input_shape=(32, 32, 3), border_mode="same", activation="relu"),
         MaxPooling2D(pool_size=(2, 2)),
 
-        #BatchNormalization(input_shape=(64, 64, 3)),
-        Conv2D(32, 3, 3, input_shape=(32, 32, 3), border_mode="same", activation="relu"),
-        MaxPooling2D(pool_size=(2, 2)),
-
-        #BatchNormalization(),
         Conv2D(64, 3, 3, border_mode="same", activation="relu"),
         MaxPooling2D(pool_size=(2, 2)),
 
-        #BatchNormalization(),
         Conv2D(128, 3, 3, border_mode="same", activation="relu"),
         MaxPooling2D(pool_size=(2, 2)),
 
@@ -110,10 +107,9 @@ def main(_):
         Dropout(0.5),
 
         Dense(512, activation="relu"),
-        #Dense(128, activation='relu'),
         Dropout(0.5),
 
-        Dense(1, name="output", activation="linear"),  #tanh
+        Dense(1, name="output", activation="linear"),
     ])
 
     model.compile(optimizer=Adam(lr=FLAGS.lrate), loss="mse")
@@ -127,7 +123,7 @@ def main(_):
     model.summary()
 
     ##
-    # Train
+    # Training
     ##
 
     print("X_train size:", len(X_train))
