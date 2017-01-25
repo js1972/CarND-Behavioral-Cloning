@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import csv
 from keras.models import Sequential
-from keras.layers import Conv2D, Dense, MaxPooling2D, Dropout, Flatten, Activation
+from keras.layers import Conv2D, Dense, MaxPooling2D, Dropout, Flatten, Activation, ELU
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoard
 import os
@@ -16,8 +16,8 @@ FLAGS = flags.FLAGS
 flags.DEFINE_string("image_dir", "data/IMG/", "The directory of the image data.")
 flags.DEFINE_string('data_path', "data/driving_log.csv", "The path to the csv of training data.")
 #flags.DEFINE_string('data_path', 'temp/driving_log.csv', 'The path to the csv of training data.')
-flags.DEFINE_integer("batch_size", 128, 'The minibatch size.')
-flags.DEFINE_integer("num_epochs", 20, 'The number of epochs to train for.')
+flags.DEFINE_integer("batch_size", 64, 'The minibatch size.')
+flags.DEFINE_integer("num_epochs", 100, 'The number of epochs to train for.')
 flags.DEFINE_float("lrate", 0.0001, "The learning rate for training.")
 flags.DEFINE_boolean("alldata", True, "Run with ALL cameras data.")
 flags.DEFINE_boolean("dropzeros", False, "Randomly drop zero steering angles data.")
@@ -95,26 +95,31 @@ def main(_):
     ##
 
     model = Sequential([
-        Conv2D(32, 3, 3, input_shape=(32, 16, 3), border_mode="same", activation="relu"),
-        MaxPooling2D(pool_size=(2, 2)),
+        Conv2D(16, 8, 8, input_shape=(32, 16, 3), subsample=(4, 4), border_mode="same"),
+        ELU(),
+        #MaxPooling2D(pool_size=(2, 2)),
 
-        Conv2D(64, 3, 3, border_mode="same", activation="relu"),
-        MaxPooling2D(pool_size=(2, 2)),
+        Conv2D(32, 5, 5, subsample=(2, 2), border_mode="same"),
+        ELU(),
+        #MaxPooling2D(pool_size=(2, 2)),
 
-        Conv2D(128, 3, 3, border_mode="same", activation="relu"),
-        MaxPooling2D(pool_size=(2, 2)),
+        Conv2D(64, 5, 5, subsample=(2, 2), border_mode="same"),
+        #MaxPooling2D(pool_size=(2, 2)),
 
         Flatten(),
-        Dense(1024, activation="relu"),
-        Dropout(0.5),
+        #Dense(1024, activation="relu"),
+        Dropout(0.2),
+        ELU(),
 
-        Dense(512, activation="relu"),
+        Dense(512),
         Dropout(0.5),
+        ELU(),
 
-        Dense(1, name="output", activation="linear"),
+        Dense(1),
     ])
 
-    model.compile(optimizer=Adam(lr=FLAGS.lrate), loss="mse")
+    #model.compile(optimizer=Adam(lr=FLAGS.lrate), loss="mse")
+    model.compile(optimizer="adam", loss="mse")
 
     # Setup callbacks
     # Run tensorboard with: tensorboard --logdir=./logs (it is installed as part of TF)
@@ -128,14 +133,10 @@ def main(_):
     # Training
     ##
 
-    print("X_train size:", len(X_train))
-
-    samples_per_epoch = (len(X_train) // FLAGS.batch_size) * FLAGS.batch_size
-    print("samples_per_epoch:", samples_per_epoch)
-    print("\n")
+    #samples_per_epoch = (len(X_train) // FLAGS.batch_size) * FLAGS.batch_size
 
     history = model.fit_generator(batch_generator(X_train, y_train, FLAGS.batch_size),
-                                  samples_per_epoch,
+                                  30080, #samples_per_epoch,
                                   FLAGS.num_epochs,
                                   callbacks=[early_stopping, save_weights, tensorboard],
                                   validation_data=batch_generator(X_val, y_val, FLAGS.batch_size),
