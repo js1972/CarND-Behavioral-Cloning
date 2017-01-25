@@ -16,9 +16,9 @@ Ensure you have a sub-directory called `logs` for tensorflow event logs to be wr
 To get the data directory just unzip the dataset which already has the contents in folders data/IMG.
 Dataset: https://d17h27t6h515a5.cloudfront.net/topher/2016/December/584f6edd_data/data.zip
 
-First working model was based on images resized down to 32 rows x 16 columns. Even though the model was flawless on track 1 the driving behaviour was a bit wobbly in some strsight sections.
+First working model was based on images resized down to 32 rows x 16 columns. Even though the model was flawless on track 1 the driving behaviour was a bit wobbly in some straight sections.
 
-On the second test track in the simulator the car can get approx 3/4 of the way through the course before it hits the wall on a cliff face. One are of research is to look at the colour spaces used and pick single channels to see if the road is picked up better by the convulation layers considering how much darker the second track is. Another area of research would be to dynamically add dark shadows onto the training data.
+On the second test track in the simulator the car can get approx 3/4 of the way through the course before it hits the wall on a cliff face. One are of research is to look at the colour spaces used and pick single channels to see if the road is picked up better by the conv layers considering how much darker the second track is. Another area of research would be to dynamically add dark shadows onto the training data.
 
 
 ## Model Architecture
@@ -65,7 +65,7 @@ For pre-processing the image data I attempted various techniques that were teste
 
 Notes: I did some basic testing with colour spaces. I switched to HSV and ran the model on that but there was no discernable improvement on track 1 or 2. I then trained on just the V layer of the HSV images and performance was worse so I went back to the original RGB images.
 
-## Training
+## Training params
 Run the model with default parameters: `python model.py`
 The default params are:
 - image_dir data/IMG/ (this is the path to the image files)
@@ -81,12 +81,13 @@ As above just run with the defaults to train a working model which is currently 
 <br>
 While training you can check the logs with tensorbard `tensorboard --logdir=./logs` (but clear out the logdir first).
 
-Current trained model https://www.dropbox.com/s/xecw5h6zq94zo9v/model.h5?dl=0
+**Current trained model is in the save/ directory**.
 
 If the model has been trained on AWS you can copy the model to your local PC with: `scp carnd@<aws ip>:/home/carnd/CarND-Behavioral-Cloning/save/model.h5 save/model.h5` and likewise with the model definition which is saved to model.json.
 
 ## Prediction - Testing the model
-To run the trained model on the simulator, first start up the Udacity driving simulator app in autonomous mode. Select Track 1.
+To run the trained model on the simulator, first start up the Udacity driving simulator app in autonomous mode. Select Track 1.<br><br>
+Note: **Current trained model is in the save/ directory**.
 Then run the following at the terminal:
 ```
 python drive.py save/model.json
