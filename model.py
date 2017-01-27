@@ -4,10 +4,8 @@ import csv
 from keras.models import Sequential
 from keras.layers import Conv2D, Dense, MaxPooling2D, Dropout, Flatten, Activation
 from keras.optimizers import Adam
-from keras.regularizers import l2
 from keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoard
 import os
-import time
 
 from utils import batch_generator
 
@@ -19,7 +17,7 @@ flags.DEFINE_string("image_dir", "data/IMG/", "The directory of the image data."
 flags.DEFINE_string('data_path', "data/driving_log.csv", "The path to the csv of training data.")
 #flags.DEFINE_string('data_path', 'temp/driving_log.csv', 'The path to the csv of training data.')
 flags.DEFINE_integer("batch_size", 128, 'The minibatch size.')
-flags.DEFINE_integer("num_epochs", 100, 'The number of epochs to train for.')
+flags.DEFINE_integer("num_epochs", 20, 'The number of epochs to train for.')
 flags.DEFINE_float("lrate", 0.0001, "The learning rate for training.")
 flags.DEFINE_boolean("alldata", True, "Run with ALL cameras data.")
 flags.DEFINE_boolean("dropzeros", False, "Randomly drop zero steering angles data.")
@@ -44,7 +42,7 @@ def main(_):
         # Notebook pre_process_data.ipynb.
         # With the all_data file only the center camera column is useful as its had the left/right cameras
         # added to that column. The left/right columns are now meaningless.
-        file_to_process = "session_data/driving_log_all.csv"
+        file_to_process = "data/driving_log_all.csv"
 
     with open(file_to_process, 'r') as f:
         reader = csv.reader(f)
@@ -78,12 +76,13 @@ def main(_):
     # here. We could instead pre-process the data into a clean file or use a pandas
     # dataframe.
     np.random.shuffle(data)
-    split_i = int(len(data) * 0.8)
+    split_i = int(len(data) * 0.9)
     X_train, _, _, y_train, _, _, _ = list(zip(*data[:split_i]))
     X_val, _, _, y_val, _, _, _ = list(zip(*data[split_i:]))
 
-    # Prepend absolute path to image filenames (should've just done this in the file)
-    base_path = os.getcwd() + "/session_data/"
+    # Prepend absolute path to image filenames
+    base_path = os.getcwd() + "/data/"
+    #base_path = os.getcwd() + "/temp/"
     X_train = [base_path + s for s in X_train]
     X_val = [base_path + s for s in X_val]
 
@@ -106,13 +105,13 @@ def main(_):
         MaxPooling2D(pool_size=(2, 2)),
 
         Flatten(),
-        Dense(1024, W_regularizer=l2(0.01), activation="relu"),
+        Dense(1024, activation="relu"),
         Dropout(0.5),
 
-        Dense(512, W_regularizer=l2(0.01), activation="relu"),
+        Dense(512, activation="relu"),
         Dropout(0.5),
 
-        Dense(1, activation="linear"),
+        Dense(1, name="output", activation="linear"),
     ])
 
     model.compile(optimizer=Adam(lr=FLAGS.lrate), loss="mse")
@@ -135,18 +134,12 @@ def main(_):
     print("samples_per_epoch:", samples_per_epoch)
     print("\n")
 
-    train_start_time = time.time()
-
     history = model.fit_generator(batch_generator(X_train, y_train, FLAGS.batch_size),
-                                  100096,  #samples_per_epoch,
+                                  samples_per_epoch,
                                   FLAGS.num_epochs,
                                   callbacks=[early_stopping, save_weights, tensorboard],
                                   validation_data=batch_generator(X_val, y_val, FLAGS.batch_size),
                                   nb_val_samples=len(X_val))
-
-    total_time = time.time() - train_start_time
-    print('Elapsed training time: %.2f sec (%.2f min)' % (total_time, total_time / 60))
-
 
     ##
     # Save model - note that the best weights are already saved above with the save_weights callback

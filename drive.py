@@ -37,8 +37,7 @@ def telemetry(sid, data):
     transformed_image_array = image_array[None, :, :, :]
     # This model currently assumes that the features of the model are just the images. Feel free to change this.
 
-    #img_processed = preprocess(transformed_image_array)
-    img_processed = (transformed_image_array / 255. - .5).astype(np.float32)
+    img_processed = preprocess(transformed_image_array)
 
     steering_angle = float(model.predict(img_processed, batch_size=1))
     # The driving model currently just outputs a constant throttle. Feel free to edit this.
