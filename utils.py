@@ -6,7 +6,7 @@ from keras.preprocessing.image import img_to_array, load_img
 
 def read_images(img_paths):
     """
-    Use the scipy imread function to read each image into a nunmpy array
+    Use the scipy imread function to read each image into a numpy array
 
     :param img_paths: Numpy array of image paths to read
     :return: 4d Numpy array containing all the images from image_paths.
@@ -44,13 +44,13 @@ def rgb2gray(imgs):
 
 def rgb2hsv(imgs):
     """
-    Convert RGB images array into HSV and zero-out all but the V dimension!
+    Convert RGB images array into HSV and zero-out all but the S dimension!
     """
     hsv_imgs = np.empty_like(imgs)
     for i, image in enumerate(imgs):
         hsv = cv2.cvtColor(image.astype("uint8"), cv2.COLOR_RGB2HSV)
         hsv[:, :, 0] = hsv[:, :, 0] * 0
-        hsv[:, :, 1] = hsv[:, :, 1] * 0
+        hsv[:, :, 2] = hsv[:, :, 2] * 0
         hsv_imgs[i] = hsv
 
     return hsv_imgs
@@ -71,6 +71,7 @@ def preprocess(imgs):
     :param imgs: Numpy array of images
     :return:  Numpy array of pre-processed images
     """
+    #imgs_processed = rgb2hsv(imgs)
     imgs_processed = crop_and_resize(imgs)
     imgs_processed = normalize(imgs_processed)
 
@@ -94,6 +95,56 @@ def random_flip(imgs, angles):
     return new_imgs, new_angles
 
 
+def add_random_shadow(image):
+    """
+    Add a random shadow region to the image by randomly choosing two points near the
+    top and bottom of the image, making a line between them and  using a mask to
+    shadow either the left or right side of this line.
+
+    :param image: Numpy image
+    :return: Numpy image with random shadow added
+    """
+
+    top_y = 320 * np.random.uniform()
+    top_x = 0
+    bot_x = 160
+    bot_y = 320 * np.random.uniform()
+    image_hls = cv2.cvtColor(image.astype("uint8"), cv2.COLOR_RGB2HLS)
+    shadow_mask = 0 * image_hls[:, :, 1]
+    X_m = np.mgrid[0:image.shape[0], 0:image.shape[1]][0]
+    Y_m = np.mgrid[0:image.shape[0], 0:image.shape[1]][1]
+
+    shadow_mask[((X_m - top_x) * (bot_y - top_y) - (bot_x - top_x) * (Y_m - top_y) >= 0)] = 1
+    # random_bright = .25+.7*np.random.uniform()
+
+    if np.random.randint(2) == 1:
+        random_bright = .5
+        cond1 = shadow_mask == 1
+        cond0 = shadow_mask == 0
+        if np.random.randint(2) == 1:
+            image_hls[:, :, 1][cond1] = image_hls[:, :, 1][cond1] * random_bright
+        else:
+            image_hls[:, :, 1][cond0] = image_hls[:, :, 1][cond0] * random_bright
+
+    image = cv2.cvtColor(image_hls, cv2.COLOR_HLS2RGB)
+
+    return image
+
+
+def augment_shadows(images):
+    """
+    Loop over all the image and randomly add shadows
+    :param images: 4d numpy array of images
+    :return: 4d numpy array of images with random shadows added
+    """
+
+    new_imgs = np.empty_like(images)
+    for i, image in enumerate(images):
+        new_imgs[i] = add_random_shadow(image)
+
+    return new_imgs
+
+
 def augment_brightness(images):
     """
     Randomly adjust brightness of provided images.
@@ -110,28 +161,32 @@ def augment_brightness(images):
 
         # randomly generate the brightness reduction factor
         # Add a constant so that it prevents the image from being completely dark
-        random_bright = .25+np.random.uniform()
+        random_bright = 0.25 + np.random.uniform()
 
         # Apply the brightness reduction to the V channel
-        hsv[:,:,2] = hsv[:,:,2]*random_bright
+        hsv[:, :, 2] = hsv[:, :, 2] * random_bright
+
+        # Clip the image so that no pixel has value greater than 255
+        hsv[:, :, 2] = np.clip(hsv[:, :, 2], a_min=0, a_max=255)
 
         # convert to RBG again
         new_imgs[i] = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
 
-    return new_imgs
+    return new_imgs.astype("float32")
 
 
 def augment(imgs, angles):
     """
-    Perform dynamic image augmentation by randomly adjust the provdied images
-    for brightness and flipping horizontally.
+    Perform dynamic image augmentation by randomly adjusting the provided images
+    so as to dynamically increase the dataset.
 
     :param imgs: Numpy array of images
     :param angles: Numpy array of angles
     :return: The augmented images and angles as a tuple
     """
-    augmented_brightness_imgs = augment_brightness(imgs)
-    imgs_augmented, angles_augmented = random_flip(augmented_brightness_imgs, angles)
+    augmented_imgs = augment_brightness(imgs)
+    augmented_imgs = augment_shadows(augmented_imgs)
+    imgs_augmented, angles_augmented = random_flip(augmented_imgs, angles)
 
     return imgs_augmented, angles_augmented
 
